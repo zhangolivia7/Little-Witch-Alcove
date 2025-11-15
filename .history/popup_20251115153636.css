@@ -1,0 +1,27 @@
+body {
+    width: 400px;
+    height: 550px;
+    background: url("Assets/No UI.png") no-repeat center center;
+    background-size: cover;
+    padding: 20px;
+    font-family: "Georgia", serif;
+  }
+  
+  h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+  
+  #focus-btn {
+    width: 50%;
+    margin-left: 25%;
+    margin-top: 300px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #b889f6;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+  

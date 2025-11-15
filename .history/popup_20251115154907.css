@@ -1,0 +1,35 @@
+html {
+    background: transparent;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin: 0;
+    padding: 0;
+  }
+
+body {
+    width: 400px;
+    height: 500px;
+    background: transparent;
+    background-color: transparent;
+    margin: 0;
+    padding: 20px;
+    font-family: "Georgia", serif;
+  }
+  
+  h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+  
+  #focus-btn {
+    width: 50%;
+    margin-left: 25%;
+    margin-top: 250px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #b889f6;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+  

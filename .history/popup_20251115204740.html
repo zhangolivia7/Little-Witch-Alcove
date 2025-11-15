@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Little Witch Alcove</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <div id="aura-overlay" style="display: none;">
+      <img src="Assets/Aura.png" alt="Aura" id="aura-image">
+    </div>
+    <div id="witch-toggle-container">
+      <label class="toggle-switch">
+        <input type="checkbox" id="witch-toggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div id="potion-currency">
+        <img src="Assets/Icons/Potion.svg" alt="Potion" class="potion-icon">
+        <span id="potion-count">0</span>
+    </div>
+    <div>
+        <img src="Assets/Witch/Witch Left.png" alt="Witch" id="witch-img">
+    </div>
+    <div id="focus-controls-container">
+        <button id="focus-btn">Focus!</button>
+        <div id="timer-controls" style="display: none;">
+            <span id="timer-text">00:00</span>
+            <button id="pause-btn" class="icon-btn">
+                <img src="Assets/Icons/Pause.svg" alt="Pause">
+            </button>
+            <button id="stop-btn" class="icon-btn">
+                <img src="Assets/Icons/X.svg" alt="Stop">
+            </button>
+        </div>
+        <div id="unproductive-warning" style="display: none;">
+            <p id="unproductive-message"></p>
+            <button id="resume-anyway-btn">Resume Anyway</button>
+        </div>
+    </div>
+
+    <div id="customization">
+        <div class="category-row">
+            <img src="Assets/Icons/Hat Category.svg" alt="Hat" class="category-icon">
+            <div class="items-scroll">
+                <div class="item-slot selected">
+                    <img src="Assets/Customization/Hat 1.png" alt="Hat 1" class="item-image">
+                </div>
+                <div class="item-slot">
+                    <img src="Assets/Customization/Hat 2.png" alt="Hat 2" class="item-image">
+                </div>
+                <div class="item-slot">
+                    <img src="Assets/Customization/Hat 3.png" alt="Hat 3" class="item-image">
+                </div>
+                <div class="item-slot">
+                    <img src="Assets/Customization/Hat 4.png" alt="Hat 4" class="item-image">
+                </div>
+                <div class="item-slot"></div>
+            </div>
+        </div>
+        <div class="category-row">
+            <img src="Assets/Icons/Robe Category.svg" alt="Robe" class="category-icon">
+            <div class="items-scroll">
+                <div class="item-slot selected">
+                    <img src="Assets/Customization/Robe 1.png" alt="Robe 1" class="item-image">
+                </div>
+                <div class="item-slot">
+                    <img src="Assets/Customization/Robe 2.png" alt="Robe 2" class="item-image">
+                </div>
+                <div class="item-slot">
+                    <img src="Assets/Customization/Robe 3.png" alt="Robe 3" class="item-image">
+                </div>
+                <div class="item-slot">
+                    <img src="Assets/Customization/Robe 4.png" alt="Robe 4" class="item-image">
+                </div>
+                <div class="item-slot"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

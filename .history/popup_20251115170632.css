@@ -1,0 +1,90 @@
+@font-face {
+    font-family: 'QuiteMagical';
+    src: url('Assets/Font/QuiteMagicalRegular.ttf');
+}
+
+body {
+    width: 400px;
+    height: 500px;
+    background-image: url('Assets/No UI.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-color: #201526;
+    padding: 20px;
+    font-family: 'QuiteMagical';
+  }
+  
+  h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+  
+  #focus-btn {
+    width: 150px;
+    margin: 10px auto 0 auto;
+    padding: 5px 2px 0px 2px;
+    border-radius: 25px;
+    background: #CAAFE5;
+    color: white;
+    font-family: 'QuiteMagical';
+    font-size: 36px;
+    border: none;
+    cursor: pointer;
+    display: block;
+  }
+
+  #witch-img {
+    width: 130px;
+    height: 210px;
+    margin: 40px auto 0 auto;
+    display: block;
+  }
+
+  #customization {
+    margin-top: 25px;
+    padding: 10px 0;
+  }
+
+  .category-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 5px;
+    margin-left: 30px;
+  }
+
+  .category-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    color: white;
+  }
+
+  .items-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
+    max-width: 275px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .items-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .item-slot {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 8px;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+  }
+
+  .item-slot.selected {
+    border: 3px solid #937640;
+  }

@@ -1,0 +1,548 @@
+@font-face {
+    font-family: 'QuiteMagical';
+    src: url('Assets/Font/QuiteMagicalRegular.ttf');
+}
+
+body {
+    width: 400px;
+    height: 500px;
+    background-image: url('Assets/No UI.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-color: #201526;
+    padding: 20px;
+    font-family: 'QuiteMagical';
+    position: relative;
+  }
+
+  #aura-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 92.5%;
+    height: 92.5%;
+    z-index: 5;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #aura-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.8;
+  }
+
+  #witch-toggle-container {
+    position: absolute;
+    top: 45px;
+    left: 54px;
+    z-index: 10;
+  }
+
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+  }
+
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #2D2220;
+    transition: 0.3s;
+    border-radius: 26px;
+    border: 2px solid #937640;
+  }
+
+  .toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+  }
+
+  .toggle-switch input:checked + .toggle-slider {
+    background-color: #CAAFE5;
+    box-shadow: 0 0 15px rgba(202, 175, 229, 0.6), 0 0 30px rgba(202, 175, 229, 0.4);
+    animation: toggleGlow 2s ease-in-out infinite;
+  }
+
+  .toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: toggleSparkle 1.5s ease-in-out infinite;
+  }
+
+  @keyframes toggleGlow {
+    0%, 100% {
+      box-shadow: 0 0 15px rgba(202, 175, 229, 0.6), 0 0 30px rgba(202, 175, 229, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(202, 175, 229, 0.8), 0 0 40px rgba(202, 175, 229, 0.6);
+    }
+  }
+
+  @keyframes toggleSparkle {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      transform: translateX(24px) scale(1);
+    }
+    50% {
+      box-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 25px rgba(202, 175, 229, 0.5);
+      transform: translateX(24px) scale(1.1);
+    }
+  }
+
+  #potion-currency {
+    position: absolute;
+    top: 45px;
+    right: 54px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #2D2220;
+    border-radius: 20px;
+    padding: 6px 12px;
+    z-index: 10;
+  }
+
+  .potion-icon {
+    width: 17px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  #potion-count {
+    color: white;
+    font-family: 'QuiteMagical';
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+  
+  #focus-controls-container {
+    height: 60px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Unproductive Pause Overlay */
+  #unproductive-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(32, 21, 38, 0.85);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .pause-message-box {
+    background: linear-gradient(135deg, #2D2220 0%, #1a1518 100%);
+    border: 2px solid #937640;
+    border-radius: 20px;
+    padding: 35px 40px;
+    text-align: center;
+    max-width: 300px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .pause-title {
+    color: #CAAFE5;
+    font-family: 'QuiteMagical';
+    font-size: 26px;
+    margin: 0 0 15px 0;
+    font-weight: normal;
+  }
+
+  .pause-message {
+    color: #ffffff;
+    font-family: 'QuiteMagical';
+    font-size: 20px;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+  }
+
+  .pause-hint {
+    color: #937640;
+    font-family: 'QuiteMagical';
+    font-size: 14px;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  #focus-btn {
+    width: 150px;
+    padding: 5px 2px 0px 2px;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #CAAFE5 0%, #b89dd4 100%);
+    color: white;
+    font-family: 'QuiteMagical';
+    font-size: 36px;
+    border: none;
+    cursor: pointer;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px rgba(202, 175, 229, 0.5), 0 0 40px rgba(202, 175, 229, 0.3);
+    animation: focusPulse 2s ease-in-out infinite, focusShimmer 3s ease-in-out infinite;
+    transition: all 0.3s ease;
+  }
+
+  #focus-btn:hover {
+    box-shadow: 0 0 30px rgba(202, 175, 229, 0.7), 0 0 60px rgba(202, 175, 229, 0.5);
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+
+  @keyframes focusPulse {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(202, 175, 229, 0.5), 0 0 40px rgba(202, 175, 229, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(202, 175, 229, 0.7), 0 0 60px rgba(202, 175, 229, 0.5);
+    }
+  }
+
+  @keyframes focusShimmer {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  #focus-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    border-radius: 25px;
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  #timer-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 150px;
+    position: absolute;
+    top: calc(50% + 5px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  #timer-text {
+    color: white;
+    font-family: 'QuiteMagical';
+    font-size: 36px;
+    min-width: 80px;
+    text-align: center;
+    padding-top: 4px;
+    line-height: 1.2;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+  }
+
+  .icon-btn img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  #pause-btn img[src*="Play.svg"] {
+    width: 28px;
+    height: 28px;
+  }
+
+  #witch-preview-container {
+    width: 130px;
+    height: 210px;
+    margin: 40px auto 0 auto;
+    position: relative;
+    display: block;
+  }
+
+  #witch-preview-head {
+    width: 130px;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    display: block;
+    pointer-events: none;
+  }
+
+  #witch-preview-body {
+    width: 72.8px; /* 28px/50px * 130px for idle state */
+    height: auto;
+    position: absolute;
+    /* top and left are set dynamically in JS based on head dimensions */
+    z-index: 1;
+    display: block;
+    pointer-events: none;
+  }
+
+  #customization {
+    margin-top: 10px;
+    padding: 10px 0;
+  }
+
+  .category-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 5px;
+    margin-left: 35px;
+  }
+
+  .category-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    color: white;
+  }
+
+  .items-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
+    max-width: 275px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .items-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .item-slot {
+    width: 66px;
+    height: 66px;
+    background: white;
+    border-radius: 8px;
+    flex-shrink: 0;
+    border: 3px solid transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .item-slot.selected {
+    border: 3px solid #937640;
+  }
+
+  .item-slot.locked {
+    background: #1a1a1a;
+    opacity: 0.6;
+    cursor: pointer;
+  }
+
+  .item-slot.locked .item-image {
+    opacity: 0.3;
+    filter: grayscale(100%);
+  }
+
+  .lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    z-index: 10;
+  }
+
+  .lock-potion-icon {
+    width: 16px;
+    height: 18px;
+  }
+
+  .lock-cost {
+    color: white;
+    font-family: 'QuiteMagical';
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Purchase Modal */
+  #purchase-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .modal-content {
+    position: relative;
+    background: #2D2220;
+    border: 3px solid #937640;
+    border-radius: 15px;
+    padding: 25px;
+    min-width: 250px;
+    z-index: 1001;
+    text-align: center;
+  }
+
+  .modal-title {
+    color: white;
+    font-family: 'QuiteMagical';
+    font-size: 24px;
+    margin: 0 0 15px 0;
+  }
+
+  .modal-message {
+    color: white;
+    font-family: 'QuiteMagical';
+    font-size: 18px;
+    margin: 0 0 20px 0;
+  }
+
+  #modal-cost {
+    color: #CAAFE5;
+    font-weight: bold;
+  }
+
+  .modal-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .modal-btn {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'QuiteMagical';
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .confirm-btn {
+    background: #CAAFE5;
+    color: white;
+  }
+
+  .confirm-btn:hover {
+    background: #b89dd4;
+  }
+
+  .confirm-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+  }
+
+  .cancel-btn {
+    background: #666;
+    color: white;
+  }
+
+  .cancel-btn:hover {
+    background: #777;
+  }

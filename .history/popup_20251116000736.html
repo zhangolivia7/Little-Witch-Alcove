@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Little Witch Alcove</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <div id="aura-overlay" style="display: none;">
+      <img src="Assets/Aura.png" alt="Aura" id="aura-image">
+    </div>
+    <div id="witch-toggle-container">
+      <label class="toggle-switch">
+        <input type="checkbox" id="witch-toggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div id="potion-currency">
+        <img src="Assets/Icons/Potion.svg" alt="Potion" class="potion-icon">
+        <span id="potion-count">0</span>
+    </div>
+    <div id="witch-preview-container">
+        <img id="witch-preview-head" alt="Witch Head">
+        <img id="witch-preview-body" alt="Witch Body">
+    </div>
+    <div id="focus-controls-container">
+        <button id="focus-btn">Focus!</button>
+        <div id="timer-controls" style="display: none;">
+            <span id="timer-text">00:00</span>
+            <button id="pause-btn" class="icon-btn">
+                <img src="Assets/Icons/Pause.svg" alt="Pause">
+            </button>
+            <button id="stop-btn" class="icon-btn">
+                <img src="Assets/Icons/X.svg" alt="Stop">
+            </button>
+        </div>
+        <div id="unproductive-warning" style="display: none;">
+            <p id="unproductive-message"></p>
+        </div>
+    </div>
+
+    <div id="customization">
+        <div class="category-row">
+            <img src="Assets/Icons/Hat Category.svg" alt="Hat" class="category-icon">
+            <div class="items-scroll">
+                <div class="item-slot selected" data-item-type="hat" data-item-index="1" data-unlocked="true">
+                    <img src="Assets/Witch/Idle/Idle Head 1.svg" alt="Hat 1" class="item-image">
+                </div>
+                <div class="item-slot locked" data-item-type="hat" data-item-index="2" data-cost="10" data-unlocked="false">
+                    <img src="Assets/Witch/Idle/Idle Head 2.svg" alt="Hat 2" class="item-image">
+                    <div class="lock-overlay">
+                        <img src="Assets/Icons/Potion.svg" alt="Potion" class="lock-potion-icon">
+                        <span class="lock-cost">10</span>
+                    </div>
+                </div>
+                <div class="item-slot locked" data-item-type="hat" data-item-index="3" data-cost="25" data-unlocked="false">
+                    <img src="Assets/Witch/Idle/Idle Head 3.svg" alt="Hat 3" class="item-image">
+                    <div class="lock-overlay">
+                        <img src="Assets/Icons/Potion.svg" alt="Potion" class="lock-potion-icon">
+                        <span class="lock-cost">25</span>
+                    </div>
+                </div>
+                <div class="item-slot locked" data-item-type="hat" data-item-index="4" data-cost="50" data-unlocked="false">
+                    <img src="Assets/Witch/Idle/Idle Head 4.svg" alt="Hat 4" class="item-image">
+                    <div class="lock-overlay">
+                        <img src="Assets/Icons/Potion.svg" alt="Potion" class="lock-potion-icon">
+                        <span class="lock-cost">50</span>
+                    </div>
+                </div>
+                <div class="item-slot locked" data-item-type="hat" data-item-index="5" data-cost="100" data-unlocked="false">
+                    <img src="Assets/Witch/Idle/Idle Head 5.svg" alt="Hat 5" class="item-image">
+                    <div class="lock-overlay">
+                        <img src="Assets/Icons/Potion.svg" alt="Potion" class="lock-potion-icon">
+                        <span class="lock-cost">100</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="category-row">
+            <img src="Assets/Icons/Robe Category.svg" alt="Robe" class="category-icon">
+            <div class="items-scroll">
+                <div class="item-slot selected" data-item-type="robe" data-item-index="1" data-unlocked="true">
+                    <img src="Assets/Witch/Idle/Idle Body 1.svg" alt="Robe 1" class="item-image">
+                </div>
+                <div class="item-slot locked" data-item-type="robe" data-item-index="2" data-cost="10" data-unlocked="false">
+                    <img src="Assets/Witch/Idle/Idle Body 2.svg" alt="Robe 2" class="item-image">
+                    <div class="lock-overlay">
+                        <img src="Assets/Icons/Potion.svg" alt="Potion" class="lock-potion-icon">
+                        <span class="lock-cost">10</span>
+                    </div>
+                </div>
+                <div class="item-slot locked" data-item-type="robe" data-item-index="3" data-cost="25" data-unlocked="false">
+                    <img src="Assets/Witch/Idle/Idle Body 3.svg" alt="Robe 3" class="item-image">
+                    <div class="lock-overlay">
+                        <img src="Assets/Icons/Potion.svg" alt="Potion" class="lock-potion-icon">
+                        <span class="lock-cost">25</span>
+                    </div>
+                </div>
+                <div class="item-slot locked" data-item-type="robe" data-item-index="4" data-cost="50" data-unlocked="false">
+                    <img src="Assets/Witch/Idle/Idle Body 4.svg" alt="Robe 4" class="item-image">
+                    <div class="lock-overlay">
+                        <img src="Assets/Icons/Potion.svg" alt="Potion" class="lock-potion-icon">
+                        <span class="lock-cost">50</span>
+                    </div>
+                </div>
+                <div class="item-slot locked" data-item-type="robe" data-item-index="5" data-cost="100" data-unlocked="false">
+                    <img src="Assets/Witch/Idle/Idle Body 5.svg" alt="Robe 5" class="item-image">
+                    <div class="lock-overlay">
+                        <img src="Assets/Icons/Potion.svg" alt="Potion" class="lock-potion-icon">
+                        <span class="lock-cost">100</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Confirmation Modal -->
+    <div id="purchase-modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <h3 class="modal-title">Confirm Purchase</h3>
+            <p class="modal-message">Purchase this item for <span id="modal-cost">0</span> potions?</p>
+            <div class="modal-buttons">
+                <button id="confirm-purchase-btn" class="modal-btn confirm-btn">Confirm</button>
+                <button id="cancel-purchase-btn" class="modal-btn cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

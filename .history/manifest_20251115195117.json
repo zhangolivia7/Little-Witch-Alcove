@@ -1,0 +1,40 @@
+{
+    "manifest_version": 3,
+    "name": "Little Witch Alcove",
+    "version": "1.0",
+    "description": "A cozy witch-themed focus buddy!",
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "Assets/Witch 16.png",
+        "32": "Assets/Witch 32.png",
+        "48": "Assets/Witch 48.png",
+        "128": "Assets/Witch 128.png"
+      }
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "permissions": [
+      "storage",
+      "activeTab",
+      "alarms"
+    ],
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"],
+        "run_at": "document_idle"
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "Assets/Witch/*",
+          "Assets/Customization/*"
+        ],
+        "matches": ["<all_urls>"]
+      }
+    ]
+  }
+  
