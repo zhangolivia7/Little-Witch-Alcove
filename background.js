@@ -26,11 +26,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // alarm to award potions every minute
     chrome.alarms.create('awardPotion', { periodInMinutes: 1 });
     
-    // monitor productivity every 30 seconds
+    // monitor productivity every 30 seconds (normal mode)
     chrome.alarms.create('checkProductivity', { periodInMinutes: 0.5 });
+    chrome.storage.local.set({ fastProductivityCheck: false });
     
     // check immediately when timer start
     checkCurrentTabProductivity();
+    
+    // notify all tabs to enter study state
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        chrome.tabs.sendMessage(tab.id, { action: 'startFocus' }).catch(() => {});
+      });
+    });
   } else if (request.action === 'pauseTimer') {
     chrome.storage.local.get(['timerPaused', 'timerPausedTime', 'timerTotalPausedTime'], (result) => {
       if (!result.timerPaused) {
@@ -60,9 +68,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
     });
   } else if (request.action === 'stopTimer') {
-    chrome.storage.local.remove(['timerStartTime', 'timerPaused', 'timerPausedTime', 'timerTotalPausedTime', 'lastAwardedMinute', 'productivityMonitoring', 'pausedByUnproductive', 'unproductiveReason', 'hadUnproductivePause']);
+    chrome.storage.local.remove(['timerStartTime', 'timerPaused', 'timerPausedTime', 'timerTotalPausedTime', 'lastAwardedMinute', 'productivityMonitoring', 'pausedByUnproductive', 'unproductiveReason', 'hadUnproductivePause', 'fastProductivityCheck']);
     chrome.alarms.clear('awardPotion');
     chrome.alarms.clear('checkProductivity');
+    
+    // notify all tabs to exit study state
+    chrome.tabs.query({}, (tabs) => {
+      tabs.forEach(tab => {
+        chrome.tabs.sendMessage(tab.id, { action: 'stopFocus' }).catch(() => {});
+      });
+    });
   }
 });
 
@@ -159,6 +174,15 @@ async function checkCurrentTabProductivity() {
       if (!result.isProductive) {
         showUnproductiveWarning(tab.id, result.reason);
         
+        // Switch to fast checking (10 seconds) when unproductive tab detected
+        chrome.storage.local.get(['fastProductivityCheck'], (fastCheck) => {
+          if (!fastCheck.fastProductivityCheck) {
+            chrome.alarms.clear('checkProductivity');
+            chrome.alarms.create('checkProductivity', { periodInMinutes: 10 / 60 }); // 10 seconds
+            chrome.storage.local.set({ fastProductivityCheck: true });
+          }
+        });
+        
         // Auto-pause if timer is running and not already paused
         if (!storage.timerPaused) {
           const pausedTime = Date.now();
@@ -178,6 +202,15 @@ async function checkCurrentTabProductivity() {
       } else {
         // remove warning if tab productive
         chrome.tabs.sendMessage(tab.id, { action: 'hideProductivityWarning' }).catch(() => {});
+        
+        // Switch back to normal checking (30 seconds) when productive tab detected
+        chrome.storage.local.get(['fastProductivityCheck'], (fastCheck) => {
+          if (fastCheck.fastProductivityCheck) {
+            chrome.alarms.clear('checkProductivity');
+            chrome.alarms.create('checkProductivity', { periodInMinutes: 0.5 }); // 30 seconds
+            chrome.storage.local.set({ fastProductivityCheck: false });
+          }
+        });
         
         // auto-res if paused bc unproductive tab
         if (storage.timerPaused && storage.pausedByUnproductive) {

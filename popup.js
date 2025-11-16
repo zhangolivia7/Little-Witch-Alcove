@@ -64,6 +64,9 @@ function startTimer() {
   document.getElementById("timer-controls").style.display = "flex";
   document.getElementById("aura-overlay").style.display = "flex";
   
+  // Update witch preview to show Study state
+  updateWitchPreview();
+  
   // start local interval to update display
   timerInterval = setInterval(() => {
     updateTimerDisplay();
@@ -166,6 +169,9 @@ function stopTimer() {
   hideUnproductiveWarning();
   const pauseBtn = document.getElementById("pause-btn");
   pauseBtn.innerHTML = '<img src="Assets/Icons/Pause.svg" alt="Pause">';
+  
+  // Update witch preview to show Idle state
+  updateWitchPreview();
 }
 
 function loadTimerState() {
@@ -199,6 +205,9 @@ function loadTimerState() {
       }
       
       updateTimerDisplay();
+      
+      // Update witch preview to show correct state (Study if running, Idle if paused)
+      updateWitchPreview();
     }
   });
 }
@@ -244,6 +253,9 @@ document.getElementById("pause-btn").addEventListener("click", () => {
     chrome.runtime.sendMessage({ action: 'resumeTimer' });
     pauseBtn.innerHTML = '<img src="Assets/Icons/Pause.svg" alt="Pause">';
   }
+  
+  // Update witch preview based on pause state
+  updateWitchPreview();
 });
 
 document.getElementById("stop-btn").addEventListener("click", () => {
@@ -482,6 +494,11 @@ document.addEventListener('click', function(e) {
 // item slot click handlers
 document.querySelectorAll('.item-slot').forEach(slot => {
   slot.addEventListener('click', function() {
+    // Prevent clicking on "coming soon" items
+    if (this.classList.contains('coming-soon')) {
+      return;
+    }
+    
     const isUnlocked = this.getAttribute('data-unlocked') === 'true';
     
     if (!isUnlocked) {
@@ -707,39 +724,44 @@ function createCenterSparkle(container, index) {
 
 // Update witch preview in popup
 function updateWitchPreview() {
-  chrome.storage.local.get(['selectedHat', 'selectedRobe'], function(result) {
+  chrome.storage.local.get(['selectedHat', 'selectedRobe', 'timerStartTime', 'timerPaused'], function(result) {
     const hat = result.selectedHat || 1;
     const robe = result.selectedRobe || 1;
     
-    const state = 'Idle';
-    const headPath = `Assets/Witch/${state}/${state} Head ${hat}.svg`;
-    const bodyPath = `Assets/Witch/${state}/${state} Body ${robe}.svg`;
+    // Use Study state if timer is running and not paused
+    const isFocusing = result.timerStartTime && !result.timerPaused;
+    const state = isFocusing ? 'Study' : 'Idle';
+    const headPath = `Assets/Witch/${state}/${state} Head ${hat}.png`;
+    const bodyPath = `Assets/Witch/${state}/${state} Body ${robe}.png`;
     
     const headImg = document.getElementById('witch-preview-head');
     const bodyImg = document.getElementById('witch-preview-body');
     
-    const headWidth = 130;
-    const bodyWidth = 72.8;
+    // Make preview bigger - scale up from 75px to ~200px (about 2.67x)
+    const headWidth = 200;
+    const bodyWidth = isFocusing ? 160 : 160; // Same size for both states
     
     if (headImg) {
       headImg.src = chrome.runtime.getURL(headPath);
+      headImg.style.width = `${headWidth}px`;
+      // Adjust head position based on state
+      if (isFocusing) {
+        headImg.style.top = '-27px'; // Study state: -8px scaled up (2.67x ≈ 21px, but using -27px for consistency)
+      } else {
+        headImg.style.top = '-27px'; // Idle state: -10px scaled up (2.67x)
+      }
       
-      // func to calculate and set body position
-      const updateBodyPosition = function() {
-        if (headImg.naturalHeight && headImg.naturalWidth) {
-          const headHeight = (headImg.naturalHeight / headImg.naturalWidth) * headWidth;
-          const bodyTop = headHeight * 0.7;
-          if (bodyImg) {
-            bodyImg.style.top = `${bodyTop}px`;
-          }
+      // calc body position when head loads
+      headImg.onload = function() {
+        if (bodyImg) {
+          bodyImg.style.width = `${bodyWidth}px`;
+          bodyImg.style.left = `${(headWidth - bodyWidth) / 2}px`;
+          bodyImg.style.top = '0px'; // Stack directly on top like free form mode
         }
       };
       
-      // calc body position when head loads
-      headImg.onload = updateBodyPosition;
-      
-      if (headImg.complete && headImg.naturalHeight) {
-        updateBodyPosition();
+      if (headImg.complete) {
+        headImg.onload();
       }
     }
     
@@ -747,6 +769,7 @@ function updateWitchPreview() {
       bodyImg.src = chrome.runtime.getURL(bodyPath);
       bodyImg.style.width = `${bodyWidth}px`;
       bodyImg.style.left = `${(headWidth - bodyWidth) / 2}px`;
+      bodyImg.style.top = '0px'; // Stack directly on top like free form mode
     }
   });
 }

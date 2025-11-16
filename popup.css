@@ -148,7 +148,7 @@ body {
   
   #focus-controls-container {
     height: 60px;
-    margin: 0 auto;
+    margin: -100px auto 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -339,15 +339,16 @@ body {
   }
 
   #witch-preview-container {
-    width: 130px;
-    height: 210px;
-    margin: 40px auto 0 auto;
+    width: 220px;
+    height: 260px;
+    margin: 90px auto 0 auto;
     position: relative;
     display: block;
+    left: calc(50% - 80px);
+    transform: translateX(-50%);
   }
 
   #witch-preview-head {
-    width: 130px;
     height: auto;
     position: absolute;
     top: 0;
@@ -358,7 +359,6 @@ body {
   }
 
   #witch-preview-body {
-    width: 72.8px;
     height: auto;
     position: absolute;
     z-index: 1;
@@ -643,13 +643,68 @@ body {
     text-shadow: 0 0 8px rgba(202, 175, 229, 0.8), 0 0 15px rgba(202, 175, 229, 0.5);
   }
 
+  .item-slot.coming-soon {
+    background: 
+      radial-gradient(ellipse at 50% 30%, rgba(45, 34, 32, 0.3) 0%, transparent 60%),
+      linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(20, 20, 20, 0.95) 50%, rgba(15, 15, 15, 0.95) 100%);
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: rgba(45, 34, 32, 0.6);
+    box-shadow: 
+      0 3px 8px rgba(0, 0, 0, 0.5),
+      inset 0 2px 4px rgba(0, 0, 0, 0.4),
+      inset 0 -2px 4px rgba(202, 175, 229, 0.08),
+      0 0 8px rgba(202, 175, 229, 0.1);
+  }
+
+  .item-slot.coming-soon .item-image {
+    opacity: 0.25;
+    filter: grayscale(100%);
+  }
+
+  .item-slot.coming-soon:hover {
+    opacity: 0.7;
+    transform: none;
+    cursor: not-allowed;
+  }
+
+  .coming-soon-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.7) 100%);
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
+  }
+
+  .coming-soon-text {
+    color: #CAAFE5;
+    font-family: 'QuiteMagical';
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(202, 175, 229, 0.8), 0 0 15px rgba(202, 175, 229, 0.5);
+    letter-spacing: 0.5px;
+  }
+
   .item-image {
     width: 100%;
     height: 100%;
     object-fit: contain;
   }
 
-  /* Purchase Modal */
+  .item-slot[data-item-type="robe"] .item-image {
+    width: 140%;
+    height: 140%;
+    transform: translate(4%, -20%);
+    object-fit: contain;
+  }
+
   #purchase-modal {
     position: fixed;
     top: 0;

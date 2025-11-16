@@ -5,9 +5,10 @@ let witchHeadImg = null;
 let witchEnabled = false;
 let selectedHat = 1;
 let selectedRobe = 1;
-let currentState = 'Idle'; // 'Idle', 'Flying', 'Walk 1', 'Walk 2'
+let currentState = 'Idle'; // 'Idle', 'Flying', 'Walk 1', 'Walk 2', 'Study'
 let currentDirection = 'Right'; // 'Left' or 'Right'
 let walkFrame = 1; // to alternate walk frames
+let isFocusing = false; // Track if user is focusing
 
 function initWitch() {
   if (window.self !== window.top) {
@@ -304,6 +305,23 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       updateWitchAppearance(request.hat || 1, request.robe || 1);
     }
     sendResponse({ success: true });
+  } else if (request.action === 'startFocus') {
+    // Move witch to corner and enter study state
+    isFocusing = true;
+    if (window.moveWitchToCorner) {
+      window.moveWitchToCorner();
+    }
+    if (window.setWitchStudyState) {
+      window.setWitchStudyState(true);
+    }
+    sendResponse({ success: true });
+  } else if (request.action === 'stopFocus') {
+    // Return to normal behavior
+    isFocusing = false;
+    if (window.setWitchStudyState) {
+      window.setWitchStudyState(false);
+    }
+    sendResponse({ success: true });
   }
   return true; // keep message channel open for async response
 });
@@ -324,9 +342,9 @@ function initializeExtensionURL() {
     } else if (chrome && chrome.runtime && chrome.runtime.getURL) {
       // Fallback: try to get URL and extract base
       try {
-        const testUrl = chrome.runtime.getURL('Assets/Witch/Idle/Idle Head 1.svg');
+        const testUrl = chrome.runtime.getURL('Assets/Witch/Flying/Flying Head 1.png');
         if (testUrl) {
-          const pathIndex = testUrl.indexOf('Assets/Witch/Idle/Idle Head 1.svg');
+          const pathIndex = testUrl.indexOf('Assets/Witch/Flying/Flying Head 1.png');
           if (pathIndex > 0) {
             extensionBaseUrl = testUrl.substring(0, pathIndex);
           }
@@ -394,14 +412,14 @@ function getExtensionURL(path) {
   return null;
 }
 
-// get SVG path based on state, dir, customization
-function getWitchSVGPath(state, direction, type, number) {
+// get PNG path based on state, dir, customization
+function getWitchPNGPath(state, direction, type, number) {
   // type: 'Body' or 'Head'
   // number: 1-5 (from hat/robe selection)
-  // state: 'Idle', 'Flying', 'Walk 1', 'Walk 2'
-  // direction: 'Left' or 'Right'
+  // state: 'Idle', 'Flying', 'Walk 1', 'Walk 2', 'Study'
+  // direction: 'Left' or 'Right' (not used for Study state)
   const folder = state;
-  const fileName = `${state} ${type} ${number}.svg`;
+  const fileName = `${state} ${type} ${number}.png`;
   return `Assets/Witch/${folder}/${fileName}`;
 }
 
@@ -416,8 +434,8 @@ function updateWitchAppearance(hat, robe) {
 function updateWitchImages() {
   if (!witchBodyImg || !witchHeadImg) return;
   
-  const bodyPath = getWitchSVGPath(currentState, currentDirection, 'Body', selectedRobe);
-  const headPath = getWitchSVGPath(currentState, currentDirection, 'Head', selectedHat);
+  const bodyPath = getWitchPNGPath(currentState, currentDirection, 'Body', selectedRobe);
+  const headPath = getWitchPNGPath(currentState, currentDirection, 'Head', selectedHat);
   
   const bodyUrl = getExtensionURL(bodyPath);
   const headUrl = getExtensionURL(headPath);
@@ -438,39 +456,44 @@ function updateWitchImages() {
     }
   }
   
-  // for flying state, body should be over head
-  if (currentState === 'Flying') {
-    witchBodyImg.style.zIndex = '2';
-    witchHeadImg.style.zIndex = '1';
-  } else {
-    // normal: head over body
-    witchBodyImg.style.zIndex = '1';
-    witchHeadImg.style.zIndex = '2';
-  }
+  // Head is always in front for all states
+  witchBodyImg.style.zIndex = '1';
+  witchHeadImg.style.zIndex = '2';
   
-  // update body positioning and size
-  const headWidth = 50;
-  let bodyWidth = 35;
+  // update body positioning and size - make sprite larger
+  const headWidth = 90; // Increased from 75
+  let bodyWidth = 76; // Increased from 63 (proportional)
   
   if (currentState === 'Idle') {
-    bodyWidth = 28;
+    bodyWidth = 72; // Increased from 60 (proportional)
+  } else if (currentState === 'Study') {
+    bodyWidth = 76; // Increased from 63 (proportional)
   }
   
   if (witchBodyImg && witchHeadImg) {
     witchBodyImg.style.width = `${bodyWidth}px`;
     witchBodyImg.style.left = `${(headWidth - bodyWidth) / 2}px`;
-
-    if (witchHeadImg.complete && witchHeadImg.naturalHeight) {
-      const headHeight = (witchHeadImg.naturalHeight / witchHeadImg.naturalWidth) * headWidth;
-      const bodyTop = headHeight * 0.7;
-      witchBodyImg.style.top = `${bodyTop}px`;
+    // Stack directly on top of each other - images are designed with head at top and body at bottom
+    witchBodyImg.style.top = '0px';
+    
+    // Keep head position fixed, but move it up more for idle pose
+    // For walk and flying, move head down (closer to body)
+    if (currentState === 'Idle') {
+      witchHeadImg.style.top = '-11px';
+    } else if (currentState === 'Walk 1' || currentState === 'Walk 2' || currentState === 'Flying') {
+      witchHeadImg.style.top = '-9px';
+    } else if (currentState === 'Study') {
+      witchHeadImg.style.top = '-10px';
     } else {
-      // fallback if head not loaded yet
-      witchBodyImg.style.top = `${headWidth * 0.7}px`;
+      witchHeadImg.style.top = '-10px';
     }
     
-    // Flip horizontally when facing right
-    if (currentDirection === 'Right') {
+    // Flip horizontally when facing right (but not for Study state)
+    if (currentState === 'Study') {
+      // Study state doesn't flip - always face left (default)
+      witchBodyImg.style.transform = 'scaleX(1)';
+      witchHeadImg.style.transform = 'scaleX(1)';
+    } else if (currentDirection === 'Right') {
       witchBodyImg.style.transform = 'scaleX(-1)';
       witchHeadImg.style.transform = 'scaleX(-1)';
     } else {
@@ -501,11 +524,11 @@ function createWitch() {
     witchElement = document.createElement('div');
     witchElement.id = 'little-witch-alcove-witch';
     
-    // Calculate initial position
-    const headWidth = 50;
-    const bodyWidth = 35;
+    // Calculate initial position - make sprite larger
+    const headWidth = 90;
+    const bodyWidth = 72;
     const initialX = (window.innerWidth / 2) - (headWidth / 2);
-    const initialY = 100;
+    const initialY = -100;
     
     witchElement.style.cssText = `
       position: fixed;
@@ -529,7 +552,7 @@ function createWitch() {
       display: block;
       pointer-events: auto;
       position: absolute;
-      top: 0;
+      top: -8px;
       left: 0;
       z-index: 2;
     `;
@@ -544,7 +567,7 @@ function createWitch() {
       display: block;
       pointer-events: auto;
       position: absolute;
-      top: ${headWidth * 0.7}px;
+      top: 0px;
       left: ${(headWidth - bodyWidth) / 2}px;
       z-index: 1;
     `;
@@ -591,8 +614,8 @@ function createWitch() {
     let velocityY = 0;
     let velocityX = 0;
     const gravity = 0.5;
-    // Floor pos
-    let floorY = window.innerHeight - 80;
+    const floorPadding = 0; // Floor at bottom edge of tab
+    let floorY = window.innerHeight - 150;
     const bounceDamping = 0.3;
     let isOnFloor = false;
     
@@ -622,7 +645,11 @@ function createWitch() {
       let newState = '';
       let newDirection = currentDirection;
       
-      if (isDragging) {
+      // Check if focusing first - Study state takes priority
+      if (isFocusing) {
+        newState = 'Study';
+        // Keep current direction for Study state (not really used)
+      } else if (isDragging) {
         newState = 'Flying';
         // dir is determined by drag movement
         const dragDirection = dragPreviousX - (dragInitialX + currentX);
@@ -698,7 +725,7 @@ function createWitch() {
         clearInterval(randomWalkTimer);
       }
       randomWalkTimer = setInterval(() => {
-        if (!isDragging && isOnFloor && !isWalking) {
+        if (!isDragging && isOnFloor && !isWalking && !isFocusing) {
           startRandomWalk();
         }
       }, walkCooldown);
@@ -706,19 +733,71 @@ function createWitch() {
     
     initRandomWalking();
     
+    // Function to move witch to corner (bottom right)
+    function moveWitchToCorner() {
+      if (!witchElement) return;
+      
+      const headWidth = 90; // Increased from 75
+      const bodyWidth = currentState === 'Idle' ? 72 : 76;
+      const cornerX = window.innerWidth - headWidth - 20; // 20px padding from right
+      const cornerY = window.innerHeight - 100; // 100px from bottom
+      
+      currentX = cornerX;
+      currentY = cornerY;
+      velocityX = 0;
+      velocityY = 0;
+      setTranslate(currentX, currentY, witchElement);
+    }
+    
+    // Function to set study state
+    function setWitchStudyState(focusing) {
+      isFocusing = focusing;
+      if (focusing) {
+        // Stop any walking
+        isWalking = false;
+        velocityX = 0;
+        velocityY = 0;
+        if (walkAnimationTimer) {
+          clearInterval(walkAnimationTimer);
+          walkAnimationTimer = null;
+        }
+        // Move to corner
+        moveWitchToCorner();
+        // Update state
+        updateWitchStateAndDirection();
+      } else {
+        // Return to normal state
+        updateWitchStateAndDirection();
+      }
+    }
+    
+    // Expose functions to window for message handler access
+    window.moveWitchToCorner = moveWitchToCorner;
+    window.setWitchStudyState = setWitchStudyState;
+    
+    // Check if timer is running and restore study mode if needed
+    chrome.storage.local.get(['timerStartTime', 'timerPaused'], function(timerResult) {
+      if (timerResult.timerStartTime && !timerResult.timerPaused) {
+        // Timer is running - enter study mode
+        setWitchStudyState(true);
+      }
+    });
+    
     // update floor position based on actual image height
     function updateFloorPosition() {
       if (witchHeadImg && witchHeadImg.complete && witchBodyImg && witchBodyImg.complete) {
-        const headWidth = 50;
-        // use current body width based on state (idle is smaller)
-        const bodyWidth = currentState === 'Idle' ? 28 : 35;
+        const headWidth = 90; // Increased from 75
+        // use current body width based on state
+        const bodyWidth = currentState === 'Idle' ? 72 : (currentState === 'Study' ? 76 : 76);
         const headHeight = (witchHeadImg.naturalHeight / witchHeadImg.naturalWidth) * headWidth;
         const bodyHeight = (witchBodyImg.naturalHeight / witchBodyImg.naturalWidth) * bodyWidth;
-        const headBottom = headHeight * 0.7;
-        const totalHeight = headBottom + bodyHeight;
-        floorY = window.innerHeight - totalHeight;
+        // The body is at top: 0px relative to witch element, so bottom of body is at currentY + bodyHeight
+        // To make bottom of body touch bottom of window: currentY = window.innerHeight - bodyHeight
+        // But we also need to account for the head overlap - head extends upward with negative top offset
+        // So the actual visual bottom is just the body bottom
+        floorY = window.innerHeight - bodyHeight;
       } else {
-        floorY = window.innerHeight - 80;
+        floorY = window.innerHeight - 110;
       }
     }
     
@@ -853,8 +932,8 @@ function createWitch() {
 
   // Physics loop
   function updatePhysics() {
-    // skip physics if drag
-    if (isDragging) {
+    // skip physics if drag or studying
+    if (isDragging || isFocusing) {
       return;
     }
     
@@ -883,7 +962,7 @@ function createWitch() {
     }
     
     // side boundaries
-    const headWidth = 50;
+    const headWidth = 75;
     if (currentX < 0) {
       currentX = 0;
       velocityX = 0;
